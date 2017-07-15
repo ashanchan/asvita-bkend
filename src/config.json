@@ -1,0 +1,76 @@
+{
+    "port": 1616,
+    "uid": "asvita",
+    "powered_by": "ASVITA",
+    "access_token": "@$V!TA-#~ANMACH",
+    "secret_token": "72002210-d412-11e6-8d2c-fb54fc3df51f",
+
+    "http": {
+        "port": 3000
+    },
+
+    "cross_domain": {
+        "origin": "*",
+        "methods": "GET,PUT,POST,DELETE",
+        "allowedHeaders": "Content-Type,X-Auth-Token,X-Access-Token"
+    },
+
+    "logs": {
+        "console": true,
+        "path": "./log"
+    },
+
+    "crypto": {
+        "algorithm": "aes-256-ctr",
+        "key": "d6F3Efeqabcdefghijklmnopqrstuvwxyz123456"
+    },
+
+    "bcrypt": {
+        "saltRounds": 10
+    },
+
+    "database": {
+        "local": {
+            "dbURI": "mongodb://localhost/cerebro"
+        },
+        "server": {
+            "dbURI": "mongodb://localhost/cerebro"
+        },
+        "options": {
+            "keepAlive": 300000,
+            "connectTimeoutMS": 300000
+        }
+
+    },
+
+    "mail": {
+        "smtp": {
+            "host": "smtp.gmail.com",
+            "port": 465,
+            "secure": true,
+            "auth": {
+                "user": "asvita.noreply@gmail.com",
+                "pass": "Asvita!234"
+            }
+        },
+        "from": "asvita.noreply@gmail.com",
+        "to": "ashanchan@gmail.com"
+    },
+
+    "messages": {
+        "register": "Session has been registered successfully.",
+        "track": "Event(s) has been successfully tracked.",
+        "errors": {
+            "unauthorized": "Unauthorized",
+            "access_token": "'access_token' is invalid or not provided.",
+            "session": "'session' is invalid or not provided.",
+            "register": "Session registration failed.",
+            "track": "Event(s) tracking failed.",
+            "auth_token": "'x-auth-token' is invalid or not provided.",
+            "not_found": "Not Found",
+            "internal_server": "Internal Server Error",
+            "malformed_body": "Malformed Body",
+            "timeout": "Gateway Timeout"
+        }
+    }
+}
