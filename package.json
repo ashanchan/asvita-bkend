@@ -1,0 +1,19 @@
+{
+    "name": "asvita-bkend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "src/server.ts",
+    "scripts": {
+        "start": "npm run build:live",
+        "build:live": "nodemon --exec ./node_modules/.bin/ts-node -- ./server.ts",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "^8.0.13",
+        "ts-node": "^3.2.0",
+        "typescript": "^2.4.1"
+    }
+}
