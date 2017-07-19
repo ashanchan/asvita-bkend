@@ -59,14 +59,15 @@ var validateUser = function(email, newPwd, ip) {
 };
 //=======================================================
 router.get('/', function(req, res) {
-    communicator.send(res, "/login", 200, true, { "data": '' });
+    let responseData = { 'isSuccess': true, 'mode': 'get', 'email': '-', 'resCode': 200, 'url': 'login' };
+    communicator.send(res, responseData);
 });
 //=======================================================
-router.post('/', function(req, res) {
+router.post('/', function(req, res, next) {
     let body = JSON.parse(req.body) || {};
     let isSuccess = false;
-    let responseData = { "mode": body.mode, "email": body.email, "resCode": 200, "url": "login" };
-    let profile = { "userId": '', "email": body.email, "pwd": body.password || '' };
+    let responseData = { 'mode': body.mode, 'email': body.email, 'resCode': 200, 'url': 'login' };
+    let profile = { 'userId': '', 'email': body.email, 'pwd': body.password || '' };
     userExists(body.email)
         .then(function(response) {
             isSuccess = response !== null;
@@ -78,7 +79,6 @@ router.post('/', function(req, res) {
                     if (isSuccess) {
                         profile.userId = uniqid(body.type + '-');
                         profile.pwd = generatePwd() + '$';
-                        console.log(profile.userId, profile.email, profile.pwd);
                         jwt.getToken(profile)
                             .then(function(token) {
                                 createUser(profile, requestIp.getClientIp(req))
@@ -100,7 +100,6 @@ router.post('/', function(req, res) {
                     if (response) {
                         let isMatched = bcrypt.decrypt(body.password, response.pwd);
                         responseData.isSuccess = isMatched;
-                        console.log(profile.userId, profile.email, profile.pwd);
                         if (isMatched) {
                             jwt.getToken(profile)
                                 .then(function(token) {
@@ -119,7 +118,6 @@ router.post('/', function(req, res) {
                 case 'fyp':
                     if (isSuccess) {
                         profile.pwd = generatePwd() + '$';
-                        console.log(profile.userId, profile.email, profile.pwd);
                         jwt.getToken(profile)
                             .then(function(token) {
                                 responseData.token = token;
@@ -136,11 +134,10 @@ router.post('/', function(req, res) {
                         communicator.send(res, responseData);
                     }
                     break;
-                case "reset":
+                case 'reset':
                     if (response) {
                         let isMatched = bcrypt.decrypt(body.password, response.pwd);
                         responseData.isSuccess = isMatched;
-                        console.log(profile.userId, profile.email, profile.pwd);
                         if (isMatched) {
                             validateUser(body.email, body.newPassword, requestIp.getClientIp(req))
                                 .then(function(token) {
@@ -158,7 +155,11 @@ router.post('/', function(req, res) {
             }
         })
         .catch(function(err) {
-            console.log('error caught ', err)
+            responseData.isSuccess = false;
+            responseData.resCode = 500;
+            responseData.redAlert = true;
+            responseData.error = err.message;
+            communicator.send(res, responseData);
         })
 });
 //=======================================================
@@ -167,10 +168,9 @@ function sendResponse(res, data) {
 }
 //=======================================================
 router.get('/validate', function(req, res) {
-    let responseData = { "mode": "validate", "resCode": 200, "url": "validate" };
+    let responseData = { 'mode': 'validate', 'resCode': 200, 'url': 'validate' };
     jwt.verify(req.query.token)
         .then(function(response) {
-            console.log('validate new pwd ', response.pwd);
             validateUser(response.email, response.pwd, requestIp.getClientIp(req))
                 .then(function(response) {
                     responseData.msg = 'validation successful';
@@ -186,5 +186,6 @@ router.get('/validate', function(req, res) {
             communicator.send(res, responseData);
         })
 });
+
 //=======================================================
 module.exports = router;

@@ -5,7 +5,6 @@ mongoose.Promise = global.Promise;
 
 exports.configure = function(config, callback) {
     try {
-        console.log('keepAlive', Number(config.options.keepAlive));
         let dbURI = config.local.dbURI;
         let options = {
             server: { socketOptions: { keepAlive: Number(config.options.keepAlive), connectTimeoutMS: Number(config.options.connectTimeoutMS) } },

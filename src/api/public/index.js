@@ -26,7 +26,8 @@ module.exports = function() {
                 middlewares.bodyParser.urlencoded({ extended: false }), // parse application/x-www-form-urlencoded
                 middlewares.bodyParser.IE(),
                 middlewares.bodyParser.textToHeaders(),
-                middlewares.requestTimeout(Number(nconf.get('timeout')), nconf.get('messages'))
+                middlewares.requestTimeout(Number(nconf.get('timeout')), nconf.get('messages')),
+                middlewares.validator.gateKeeper()
             );
 
             routes.load(this);

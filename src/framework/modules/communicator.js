@@ -20,7 +20,7 @@ function configure(config, callback) {
 }
 
 function send(res, data) {
-    logger.info(data.url, data.mode, data.email, data.isSuccess);
+    logger.info(data.url, data.mode, data.email, data.resCode, data.isSuccess, (data.redAlert ? data.error : ''));
     res.status(data.resCode).jsonp({ "success": data.isSuccess, "message": message[data.resCode], "response": data });
 }
 

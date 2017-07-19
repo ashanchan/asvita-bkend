@@ -19,7 +19,7 @@ module.exports = function(message) {
                 console.error('Error: %s \nDetails: %s', err && err.message ? err.message : err, err && err.stack ? err.stack : '');
             }
 
-            res.status(status).jsonp(data);
+            res.status(200).jsonp(data);
 
             // pretend like data was written out
             res.write = res.end = res.render = res.send = res.json = res.jsonp = () => true;
