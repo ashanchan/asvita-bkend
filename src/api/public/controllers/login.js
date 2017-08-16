@@ -23,7 +23,7 @@ var userExists = function(email) {
     });
 };
 //=======================================================
-var createUser = function(profile, ip) {
+var createUser = function(type, profile, ip) {
     return new Promise(function(resolve, reject) {
         let newUser = new collection.USER({
             userId: profile.userId,
@@ -36,7 +36,12 @@ var createUser = function(profile, ip) {
         //=== presave 
         newUser.save((err, response) => {
             if (err) reject(err);
-            resolve(response);
+            //=== create profile entry
+            let newProfile = type === 'doc' ? new collection.DOCTOR_PROFILE() : new collection.PATIENT_PROFILE();
+            newProfile.userId = profile.userId;
+            newProfile.save((err, response) => {
+                resolve(response);
+            });
         });
     });
 };
@@ -81,7 +86,7 @@ router.post('/', function(req, res, next) {
                         profile.pwd = generatePwd() + '$';
                         jwt.getToken(profile)
                             .then(function(token) {
-                                createUser(profile, requestIp.getClientIp(req))
+                                createUser(body.type, profile, requestIp.getClientIp(req))
                                     .then(function(response) {
                                         responseData.token = token;
                                         responseData.msg = 'registration successful';
@@ -104,6 +109,7 @@ router.post('/', function(req, res, next) {
                             jwt.getToken(profile)
                                 .then(function(token) {
                                     responseData.token = token;
+                                    responseData.userId = response.userId;
                                     responseData.msg = 'Login Successful';
                                     responseData.resCode = 200;
                                     communicator.send(res, responseData);
@@ -113,6 +119,10 @@ router.post('/', function(req, res, next) {
                             responseData.resCode = 200;
                             communicator.send(res, responseData);
                         }
+                    } else {
+                        responseData.msg = 'Not a Valid User!! Unauthorised Login';
+                        responseData.resCode = 200;
+                        communicator.send(res, responseData);
                     }
                     break;
                 case 'fyp':
@@ -162,10 +172,6 @@ router.post('/', function(req, res, next) {
             communicator.send(res, responseData);
         })
 });
-//=======================================================
-function sendResponse(res, data) {
-    communicator.send(res, data);
-}
 //=======================================================
 router.get('/validate', function(req, res) {
     let responseData = { 'mode': 'validate', 'resCode': 200, 'url': 'validate' };

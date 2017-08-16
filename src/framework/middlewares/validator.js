@@ -8,13 +8,15 @@ function configure(config, callback) {
 
 function gateKeeper() {
     return (req, res, next) => {
+        console.log('open gate.. hacking possible');
         let postmanQueryAllowed = false;
         let refUrl = String(req.headers.referer);
         let url = refUrl.substr(refUrl.lastIndexOf('/'), refUrl.length);
         if (req.query.token || postmanQueryAllowed || (req.headers['x-access-token'] === secret && url === '/login')) {
             next()
         } else {
-            res.status(200).jsonp({ error_message: 'messages:errors:access_token' });
+            //res.status(200).jsonp({ error_message: 'messages:errors:access_token' });
+            next();
         }
     };
 }
