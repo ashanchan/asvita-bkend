@@ -85,14 +85,14 @@ router.post('/', function(req, res, next) {
                                     .then(function(response) {
                                         responseData.token = token;
                                         responseData.msg = 'registration successful';
-                                        responseData.resCode = 201;
+                                        responseData.resCode = 200;
                                         mail.send({ to: 'ashanchan@gmail.com', subject: 'testing mail from Asvita 2', link: token, pwd: profile.pwd, userId: profile.userId });
                                         communicator.send(res, responseData);
                                     })
                             })
                     } else {
-                        responseData.resCode = 403;
-                        responseData.msg = 'Unique email required';
+                        responseData.resCode = 200;
+                        responseData.msg = 'User Already Exists.. Unique email required';
                         communicator.send(res, responseData);
                     }
                     break;
@@ -104,13 +104,13 @@ router.post('/', function(req, res, next) {
                             jwt.getToken(profile)
                                 .then(function(token) {
                                     responseData.token = token;
-                                    responseData.msg = 'login successful';
+                                    responseData.msg = 'Login Successful';
                                     responseData.resCode = 200;
                                     communicator.send(res, responseData);
                                 })
                         } else {
-                            responseData.msg = 'unauthorised login';
-                            responseData.resCode = 403;
+                            responseData.msg = 'Unauthorised Login';
+                            responseData.resCode = 200;
                             communicator.send(res, responseData);
                         }
                     }
@@ -122,15 +122,15 @@ router.post('/', function(req, res, next) {
                             .then(function(token) {
                                 responseData.token = token;
                                 responseData.isSuccess = true;
-                                responseData.msg = 'Password Reset successful';
-                                responseData.resCode = 201;
+                                responseData.msg = 'Password Sent To Registered e-mail.';
+                                responseData.resCode = 200;
                                 mail.send({ to: 'ashanchan@gmail.com', subject: 'testing mail from Asvita 2', link: token, pwd: profile.pwd, userId: profile.userId });
                                 communicator.send(res, responseData);
                             })
                     } else {
                         responseData.isSuccess = false;
-                        responseData.msg = 'Entry not found';
-                        responseData.resCode = 403;
+                        responseData.msg = 'Registered email Entry Not Found.';
+                        responseData.resCode = 200;
                         communicator.send(res, responseData);
                     }
                     break;
@@ -142,12 +142,12 @@ router.post('/', function(req, res, next) {
                             validateUser(body.email, body.newPassword, requestIp.getClientIp(req))
                                 .then(function(token) {
                                     responseData.msg = 'Password Reset Successful';
-                                    responseData.resCode = 201;
+                                    responseData.resCode = 200;
                                     communicator.send(res, responseData);
                                 })
                         } else {
-                            responseData.msg = 'unauthorised login';
-                            responseData.resCode = 403;
+                            responseData.msg = 'Not A Valid Existing Password';
+                            responseData.resCode = 200;
                             communicator.send(res, responseData);
                         }
                     }
