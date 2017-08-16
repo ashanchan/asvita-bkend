@@ -22,23 +22,49 @@ userSchema.pre('validate', function(next) {
 });
 //====================================================
 //====================================================
-let profileSchema = new Schema({
+let patientProfileSchema = new Schema({
     userId: { type: String, required: true, unique: true },
-    role: { type: String, required: false, unique: false },
-    name: { type: String, required: false, unique: false },
+    profileUrl: { type: String, required: false, unique: false },
+    fullName: { type: String, required: false, unique: false },
+    mobile: { type: String, required: false, unique: false },
+    gender: { type: String, required: false, unique: false },
+    salutation: { type: String, required: false, unique: false },
     address: { type: String, required: false, unique: false },
-    pin: { type: Number, required: false, unique: false },
-    email: { type: String, required: false, unique: false },
-    phone: { type: String, required: false, unique: false },
+    city: { type: String, required: false, unique: false },
+    pin: { type: String, required: false, unique: false },
+    state: { type: String, required: false, unique: false },
+    sosPerson: { type: String, required: false, unique: false },
+    sosMobile: { type: String, required: false, unique: false },
     dob: { type: String, required: false, unique: false },
-    imgUrl: { type: String, required: false, unique: false },
-    notes: { type: String, required: false, unique: false },
-    links: { type: String, required: false, unique: false }
+    height: { type: String, required: false, unique: false },
+    weight: { type: String, required: false, unique: false },
+    medicalHistory: { type: Array, required: false, unique: false },
+    medicalHistoryOther: { type: String, required: false, unique: false },
+    allergy: { type: String, required: false, unique: false }
 });
-
+//====================================================
+//====================================================
+let doctorProfileSchema = new Schema({
+    userId: { type: String, required: true, unique: true },
+    profileUrl: { type: String, required: false, unique: false },
+    fullName: { type: String, required: false, unique: false },
+    mobile: { type: String, required: false, unique: false },
+    clinic: { type: Array, required: false, unique: false },
+    address: { type: Array, required: false, unique: false },
+    city: { type: Array, required: false, unique: false },
+    pin: { type: Array, required: false, unique: false },
+    state: { type: Array, required: false, unique: false },
+    contact: { type: Array, required: false, unique: false },
+    openTime: { type: Array, required: false, unique: false },
+    endTime: { type: Array, required: false, unique: false },
+    openDay: { type: Array, required: false, unique: false },
+    specialization: { type: Array, required: false, unique: false },
+    specializationOther: { type: String, required: false, unique: false }
+});
 //====================================================
 //====================================================
 module.exports = {
     USER: mongoose.model('user', userSchema, 'user'),
-    PROFILE: mongoose.model('info', profileSchema, 'info')
+    DOCTOR_PROFILE: mongoose.model('doctor', doctorProfileSchema, 'doctor'),
+    PATIENT_PROFILE: mongoose.model('patient', patientProfileSchema, 'patient')
 }
