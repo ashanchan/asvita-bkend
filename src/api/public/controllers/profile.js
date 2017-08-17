@@ -1,8 +1,19 @@
 'use strict';
 const express = require('express');
+const path = require('path');
+const formidable = require('formidable');
 const { bcrypt, crypto, jwt, communicator, nconf, logger, randomstring, mail } = require('./../../../framework').modules;
 const collection = require('../models/collection');
 let router = express.Router();
+//=======================================================
+var renameFile = function(sourcePath, targetPath) { 
+    return new Promise(function(resolve, reject) {  
+        fs.rename(sourcePath, targetPath, function(err, res) {
+            if (err) reject(err);
+            else resolve(targetPath);;
+        }); 
+    }); 
+};
 //=======================================================
 var findProfile = function(body) {
     return new Promise(function(resolve, reject) {
@@ -73,7 +84,14 @@ router.post('/', function(req, res, next) {
     let isSuccess = false;
     let responseData = { 'mode': body.mode, 'userId': body.userId, 'resCode': 200, 'url': 'profile' };
     console.log('routing required ', body.mode);
+
     if (body.mode === 'updateProfile') {
+        var form = new formidable.IncomingForm();
+        form.parse(req, function(err, fields, files) {
+            console.log(files);
+        });
+
+
         updateProfile(body)
             .then(function(response) {
                 if (response) {
