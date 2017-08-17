@@ -16,7 +16,7 @@ function generatePwd() {
 //=======================================================
 var userExists = function(email) {
     return new Promise(function(resolve, reject) {
-        collection.USER.findOne({ 'email': crypto.encrypt(email) }, function(err, response) {
+        collection.USER.findOne({ 'email': crypto.encrypt(email), 'validated': true }, function(err, response) {
             if (err) reject(err);
             resolve(response);
         })
@@ -39,6 +39,7 @@ var createUser = function(type, profile, ip) {
             //=== create profile entry
             let newProfile = type === 'doc' ? new collection.DOCTOR_PROFILE() : new collection.PATIENT_PROFILE();
             newProfile.userId = profile.userId;
+            newProfile.profileUrl = '-';
             newProfile.save((err, response) => {
                 resolve(response);
             });
@@ -89,7 +90,7 @@ router.post('/', function(req, res, next) {
                                 createUser(body.type, profile, requestIp.getClientIp(req))
                                     .then(function(response) {
                                         responseData.token = token;
-                                        responseData.msg = 'registration successful';
+                                        responseData.msg = 'Registration Successful.<br>Please click on Validate Link From The Mail you Received From Us.';
                                         responseData.resCode = 200;
                                         mail.send({ to: 'ashanchan@gmail.com', subject: 'testing mail from Asvita 2', link: token, pwd: profile.pwd, userId: profile.userId });
                                         communicator.send(res, responseData);
@@ -120,7 +121,7 @@ router.post('/', function(req, res, next) {
                             communicator.send(res, responseData);
                         }
                     } else {
-                        responseData.msg = 'Not a Valid User!! Unauthorised Login';
+                        responseData.msg = 'Not a Valid User!!<br>Please click on Validate Link From The Mail you Received From Us.';
                         responseData.resCode = 200;
                         communicator.send(res, responseData);
                     }
@@ -132,7 +133,7 @@ router.post('/', function(req, res, next) {
                             .then(function(token) {
                                 responseData.token = token;
                                 responseData.isSuccess = true;
-                                responseData.msg = 'Password Sent To Registered e-mail.';
+                                responseData.msg = 'Password Sent To Registered e-mail.<br>Please click on Validate Link From The Mail you Received From Us.';
                                 responseData.resCode = 200;
                                 mail.send({ to: 'ashanchan@gmail.com', subject: 'testing mail from Asvita 2', link: token, pwd: profile.pwd, userId: profile.userId });
                                 communicator.send(res, responseData);
@@ -160,6 +161,10 @@ router.post('/', function(req, res, next) {
                             responseData.resCode = 200;
                             communicator.send(res, responseData);
                         }
+                    } else {
+                        responseData.msg = 'Not a Valid User!!<br>Please click on Validate Link From The Mail you Received From Us.';
+                        responseData.resCode = 200;
+                        communicator.send(res, responseData);
                     }
                     break;
             }
