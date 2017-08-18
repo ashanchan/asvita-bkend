@@ -1,7 +1,5 @@
 'use strict';
 const express = require('express');
-const path = require('path');
-const formidable = require('formidable');
 const { bcrypt, crypto, jwt, communicator, nconf, logger, randomstring, mail } = require('./../../../framework').modules;
 const collection = require('../models/collection');
 let router = express.Router();
@@ -17,7 +15,7 @@ var renameFile = function(sourcePath, targetPath) { 
 //=======================================================
 var findProfile = function(body) {
     return new Promise(function(resolve, reject) {
-        let profile = body.userId.substr(0, 3) === 'doc' ? 'DOCTOR_PROFILE' : 'PATIENT_PROFILE';
+        let profile = body.userId.substr(0, 3) === 'DOC' ? 'DOCTOR_PROFILE' : 'PATIENT_PROFILE';
         collection[profile].findOne({ userId: body.userId },
             function(err, response) {
                 if (err) reject(err);
@@ -28,7 +26,7 @@ var findProfile = function(body) {
 //=======================================================
 var updateProfile = function(body) {
     return new Promise(function(resolve, reject) {
-        if (body.userId.substr(0, 3) === 'doc') {
+        if (body.userId.substr(0, 3) === 'DOC') {
             collection.DOCTOR_PROFILE.findOneAndUpdate({
                     userId: body.userId
                 }, {
@@ -44,7 +42,8 @@ var updateProfile = function(body) {
                     endTime: body.endTime,
                     openDay: body.openDay,
                     specialization: body.specialization,
-                    specializationOther: body.specializationOther
+                    specializationOther: body.specializationOther,
+                    qualification: body.qualification
                 }, {},
                 function(err, response) {
                     if (err) reject(err);
@@ -69,7 +68,8 @@ var updateProfile = function(body) {
                     weight: body.weight,
                     medicalHistory: body.medicalHistory,
                     medicalHistoryOther: body.medicalHistoryOther,
-                    allergy: body.allergy
+                    allergy: body.allergy,
+                    notes: body.notes
                 }, {},
                 function(err, response) {
                     if (err) reject(err);
@@ -83,15 +83,8 @@ router.post('/', function(req, res, next) {
     let body = JSON.parse(req.body) || {};
     let isSuccess = false;
     let responseData = { 'mode': body.mode, 'userId': body.userId, 'resCode': 200, 'url': 'profile' };
-    console.log('routing required ', body.mode);
 
     if (body.mode === 'updateProfile') {
-        var form = new formidable.IncomingForm();
-        form.parse(req, function(err, fields, files) {
-            console.log(files);
-        });
-
-
         updateProfile(body)
             .then(function(response) {
                 if (response) {

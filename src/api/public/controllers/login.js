@@ -10,7 +10,8 @@ function generatePwd() {
     return randomstring.generate({
         length: 8,
         readable: true,
-        charset: 'alphanumeric'
+        charset: 'hex',
+        capitalization: 'uppercase'
     })
 }
 //=======================================================
@@ -83,7 +84,8 @@ router.post('/', function(req, res, next) {
                     isSuccess = !isSuccess;
                     responseData.isSuccess = isSuccess;
                     if (isSuccess) {
-                        profile.userId = uniqid(body.type + '-');
+                        //profile.userId = uniqid(body.type + '-');
+                        profile.userId = String(body.type).toUpperCase() + '-' + generatePwd();
                         profile.pwd = generatePwd() + '$';
                         jwt.getToken(profile)
                             .then(function(token) {
