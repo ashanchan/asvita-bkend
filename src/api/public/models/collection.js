@@ -40,7 +40,9 @@ let patientProfileSchema = new Schema({
     weight: { type: String, required: false, unique: false },
     medicalHistory: { type: Array, required: false, unique: false },
     medicalHistoryOther: { type: String, required: false, unique: false },
-    allergy: { type: String, required: false, unique: false }
+    allergy: { type: String, required: false, unique: false },
+	notes: { type: String, required: false, unique: false },
+    connection: { type: Array, required: false, unique: false }
 });
 //====================================================
 //====================================================
@@ -59,7 +61,9 @@ let doctorProfileSchema = new Schema({
     endTime: { type: Array, required: false, unique: false },
     openDay: { type: Array, required: false, unique: false },
     specialization: { type: Array, required: false, unique: false },
-    specializationOther: { type: String, required: false, unique: false }
+    specializationOther: { type: String, required: false, unique: false },
+    qualification: { type: String, required: false, unique: false },
+    connection: { type: Array, required: false, unique: false }
 });
 //====================================================
 //====================================================
