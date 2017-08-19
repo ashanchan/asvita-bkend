@@ -18,10 +18,11 @@ var userFolderSize = function(folder) {
 //=======================================================
 router.post('/uploadImg', function(req, res, next) {
     let body = JSON.parse(req.body) || {};
-    let responseData = { 'userId': body.userId, 'resCode': 200, 'url': 'image' };
+    let responseData = { 'userId': body.userId, isSuccess:false, 'resCode': 200, 'url': 'image' };
     let dir = './src/public/uploads/' + body.userId;
     let fname = dir + '/' + body.mode + '.jpg'
     let base64Data = body.filePath.replace(/^data:image\/jpg;base64,/, "");
+	
     try {
         if (!fs.existsSync(dir)) {
             fs.mkdirSync(dir);
@@ -32,19 +33,32 @@ router.post('/uploadImg', function(req, res, next) {
                 responseData.msg = 'Error Uploading Files ' + err.msg;
                 communicator.send(res, responseData);
             } else {
-                userFolderSize(dir)
-                    .then(function(response) {
-                        responseData.msg = 'File Uploaded';
-                        responseData.size = response;
-                        console.log('folder size hai ', response);
-                        communicator.send(res, responseData);
-                    })
-                    .catch(function(err) {
-                        responseData.msg = 'Folder Processing Error ' + err.msg;
-                        communicator.send(res, responseData);
-                    });
+				responseData.isSuccess = true;
+				responseData.msg = 'File Uploaded';
+				communicator.send(res, responseData);
             }
         });
+    } catch (e) {
+        responseData.msg = 'Error Processing Files ' + err.msg;
+        communicator.send(res, responseData);
+    }
+});
+//=======================================================
+router.post('/diskSpace', function(req, res, next) {
+    let body = JSON.parse(req.body) || {};
+    let responseData = { 'userId': body.userId, isSuccess:false,'resCode': 200, 'url': 'image' };
+    let dir = './src/public/uploads/' + body.userId;
+    try {
+		userFolderSize(dir)
+			.then(function(response) {
+				responseData.isSuccess = true;
+				responseData.diskSpace = {totalSize : '1', usedSize:response};
+				communicator.send(res, responseData);
+			})
+			.catch(function(err) {
+				responseData.msg = 'Folder Processing Error ' + err.msg;
+				communicator.send(res, responseData);
+			});
     } catch (e) {
         responseData.msg = 'Error Processing Files ' + err.msg;
         communicator.send(res, responseData);
