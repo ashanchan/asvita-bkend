@@ -21,7 +21,7 @@ router.post('/uploadImg', function(req, res, next) {
     let responseData = { 'userId': body.userId, isSuccess:false, 'resCode': 200, 'url': 'image' };
     let dir = './src/public/uploads/' + body.userId;
     let fname = dir + '/' + body.mode + '.jpg'
-    let base64Data = body.filePath.replace(/^data:image\/jpg;base64,/, "");
+    let base64Data = body.filePath.replace(/^data:image\/jpeg;base64,/, "");
 	
     try {
         if (!fs.existsSync(dir)) {
@@ -61,6 +61,25 @@ router.post('/diskSpace', function(req, res, next) {
 			});
     } catch (e) {
         responseData.msg = 'Error Processing Files ' + err.msg;
+        communicator.send(res, responseData);
+    }
+});
+//=======================================================
+router.post('/fileList', function(req, res, next) {
+    let body = JSON.parse(req.body) || {};
+    let responseData = { 'userId': body.userId, isSuccess:false,'resCode': 200, 'url': 'image' };
+    let dir = './src/public/uploads/' + body.userId;
+	let fileList = [];
+    try {
+		fs.readdirSync(dir).forEach(file => {
+			fileList.push(file);
+		})
+		responseData.isSuccess = true;
+		responseData.fileList = fileList;
+		communicator.send(res, responseData);
+
+    } catch (e) {
+        responseData.msg = 'Error Processing Files List ' + err.msg;
         communicator.send(res, responseData);
     }
 });
