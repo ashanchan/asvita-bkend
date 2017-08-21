@@ -132,4 +132,24 @@ router.post('/', function(req, res, next) {
     }
 });
 //=======================================================
+router.post('/getProfileList', function(req, res, next) {
+    let body = JSON.parse(req.body) || {};
+    let responseData = { isSuccess: false, 'resCode': 200, 'url': 'image' };
+	let profile = body.userId.substr(0, 3) !== 'DOC' ? 'DOCTOR_PROFILE' : 'PATIENT_PROFILE';
+
+	collection[profile].find({}, function(err, response) {
+        if (err) {
+            responseData.isSuccess = false;
+            responseData.data = {};
+            communicator.send(res, responseData);
+
+        } else {
+            responseData.isSuccess = true;
+            responseData.data = response;
+            communicator.send(res, responseData);
+        }
+    })
+});
+
+//=======================================================
 module.exports = router;
