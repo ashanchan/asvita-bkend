@@ -1,7 +1,7 @@
 'use strict';
 const express = require('express');
 const fs = require('fs');
-const { communicator } = require('./../../../framework').modules;
+const { communicator, thumbnail, mail } = require('./../../../framework').modules;
 const collection = require('../models/collection');
 const getFolderSize = require('get-folder-size');
 let router = express.Router();
@@ -33,6 +33,12 @@ router.post('/uploadImg', function(req, res, next) {
                 responseData.msg = 'Error Uploading Files ' + err.msg;
                 communicator.send(res, responseData);
             } else {
+                setTimeout(function() {
+                    console.log("Hello");
+                    thumbnail.createThumbnail(dir);
+                }, 3000);
+
+
                 responseData.isSuccess = true;
                 responseData.msg = 'File Uploaded';
                 communicator.send(res, responseData);
@@ -83,5 +89,13 @@ router.post('/fileList', function(req, res, next) {
         communicator.send(res, responseData);
     }
 });
+//=======================================================
+router.post('/sendRequestMail', function(req, res, next) {
+    let body = JSON.parse(req.body) || {};
+    let responseData = { 'userId': body.userId, isSuccess: true, 'resCode': 200, 'url': 'request' };
+	mail.send({ to: 'ashanchan@gmail.com', subject: 'Request Mail', link: body.requestType, pwd: body.requestName+ ' - '+body.requestNumber, userId: body.userId+' - '+body.fullName});
+	communicator.send(res, responseData);
+});
+                          
 //=======================================================
 module.exports = router;

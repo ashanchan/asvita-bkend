@@ -9,6 +9,7 @@ const randomstring = require("randomstring");
 const db = require('./db');
 const mail = require('./mail');
 const jwt = require('./jwt');
+const thumbnail = require('./thumbnail');
 const { validator } = require('./../middlewares');
 
 function init(env, server) {
@@ -39,5 +40,6 @@ module.exports = {
     bcrypt,
     logger,
     randomstring,
-    jwt
+    jwt,
+    thumbnail
 };

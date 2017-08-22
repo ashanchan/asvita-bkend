@@ -45,7 +45,6 @@ var createUser = function(type, profile, ip) {
             //=== create profile entry
             let newProfile = type === 'doc' ? new collection.DOCTOR_PROFILE() : new collection.PATIENT_PROFILE();
             newProfile.userId = profile.userId;
-            newProfile.profileUrl = '-';
             newProfile.save((err, response) => {
                 resolve(response);
             });
