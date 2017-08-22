@@ -26,13 +26,18 @@ var userExists = function(email) {
 //=======================================================
 var createUser = function(type, profile, ip) {
     return new Promise(function(resolve, reject) {
+        //=== 6 month subscription
+        let startFrom = new Date();
+        let exipresOn = startFrom.setMonth(startFrom.getMonth() + 6);
+        exipresOn = new Date(exipresOn);
         let newUser = new collection.USER({
             userId: profile.userId,
             email: crypto.encrypt(profile.email),
             pwd: bcrypt.encrypt(profile.pwd),
             registeredIP: ip,
             accessedIP: ip,
-            registeredOn: Date.now()
+            registeredOn: Date.now(),
+            subscription: { 'startFrom': new Date(), 'expiresOn': exipresOn, 'diskSpace': 1, 'addOn': '' }
         });
         //=== presave 
         newUser.save((err, response) => {
@@ -40,7 +45,6 @@ var createUser = function(type, profile, ip) {
             //=== create profile entry
             let newProfile = type === 'doc' ? new collection.DOCTOR_PROFILE() : new collection.PATIENT_PROFILE();
             newProfile.userId = profile.userId;
-            newProfile.profileUrl = '-';
             newProfile.save((err, response) => {
                 resolve(response);
             });
@@ -87,6 +91,7 @@ router.post('/', function(req, res, next) {
                         //profile.userId = uniqid(body.type + '-');
                         profile.userId = String(body.type).toUpperCase() + '-' + generatePwd();
                         profile.pwd = generatePwd() + '$';
+                        console.log('pass word ', profile.pwd);
                         jwt.getToken(profile)
                             .then(function(token) {
                                 createUser(body.type, profile, requestIp.getClientIp(req))
@@ -199,6 +204,39 @@ router.get('/validate', function(req, res) {
             communicator.send(res, responseData);
         })
 });
+//=======================================================
+router.post('/subscription', function(req, res, next) {
+    let body = JSON.parse(req.body) || {};
+    let responseData = { 'userId': body.userId, isSuccess: false, 'resCode': 200, 'url': 'image' };
+    collection.USER.findOne({ 'userId': body.userId }, function(err, response) {
+        if (err) {
+            responseData.isSuccess = false;
+            responseData.data = {};
+            communicator.send(res, responseData);
 
+        } else {
+            responseData.isSuccess = true;
+            responseData.data = response.subscription;
+            communicator.send(res, responseData);
+        }
+    })
+});
+//=======================================================
+router.post('/getList', function(req, res, next) {
+    let body = JSON.parse(req.body) || {};
+    let responseData = { isSuccess: false, 'resCode': 200, 'url': 'image' };
+    collection.USER.find({}, { userId: 1, _id: 0 }, function(err, response) {
+        if (err) {
+            responseData.isSuccess = false;
+            responseData.data = {};
+            communicator.send(res, responseData);
+
+        } else {
+            responseData.isSuccess = true;
+            responseData.data = response;
+            communicator.send(res, responseData);
+        }
+    })
+});
 //=======================================================
 module.exports = router;

@@ -12,7 +12,8 @@ let userSchema = new Schema({
     registeredIP: { type: String, required: true },
     registeredOn: { type: Date, required: true },
     accessedIP: { type: String, required: true },
-    accessedOn: { type: Date, default: Date.now }
+    accessedOn: { type: Date, default: Date.now },
+    subscription: { type: Object, required: false, unique: false }
 });
 
 userSchema.pre('validate', function(next) {
@@ -24,7 +25,6 @@ userSchema.pre('validate', function(next) {
 //====================================================
 let patientProfileSchema = new Schema({
     userId: { type: String, required: true, unique: true },
-    profileUrl: { type: String, required: false, unique: false },
     fullName: { type: String, required: false, unique: false },
     mobile: { type: String, required: false, unique: false },
     gender: { type: String, required: false, unique: false },
@@ -41,14 +41,14 @@ let patientProfileSchema = new Schema({
     medicalHistory: { type: Array, required: false, unique: false },
     medicalHistoryOther: { type: String, required: false, unique: false },
     allergy: { type: String, required: false, unique: false },
-	notes: { type: String, required: false, unique: false },
+    notes: { type: String, required: false, unique: false },
+    habit: { type: String, required: false, unique: false },
     connection: { type: Array, required: false, unique: false }
 });
 //====================================================
 //====================================================
 let doctorProfileSchema = new Schema({
     userId: { type: String, required: true, unique: true },
-    profileUrl: { type: String, required: false, unique: false },
     fullName: { type: String, required: false, unique: false },
     mobile: { type: String, required: false, unique: false },
     clinic: { type: Array, required: false, unique: false },
