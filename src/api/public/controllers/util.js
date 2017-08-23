@@ -96,6 +96,45 @@ router.post('/sendRequestMail', function(req, res, next) {
 	mail.send({ to: 'ashanchan@gmail.com', subject: 'Request Mail', link: body.requestType, pwd: body.requestName+ ' - '+body.requestNumber, userId: body.userId+' - '+body.fullName});
 	communicator.send(res, responseData);
 });
-                          
+//=======================================================
+router.post('/addPrescription', function(req, res, next) {
+    let body = JSON.parse(req.body) || {};
+    let responseData = { 'userId': body.userId, isSuccess: true, 'resCode': 200, 'url': 'request' };
+	console.log('record ', body.patientId);
+	let prescription = new collection.PRESCRIPTION({
+            patientId: body.patientId,
+			doctorId: body.doctorId,
+			recordDate: body.recordDate,
+			referred: body.referred,
+			weight: body.weight,
+			temprature: body.temprature,
+			bp: body.bp,
+			diagnosis: body.diagnosis,
+			invAdvised: body.invAdvised,
+			followUp: body.followUp,
+			notes: body.notes,
+			medicine: body.medicine,
+			bbf: body.bbf,
+			abf: body.abf,
+			bl: body.bl,
+			al: body.al,
+			eve: body.eve,
+			bd: body.bd,
+			ad: body.ad,
+			day: body.day
+        });
+        //=== presave 
+        prescription.save((err, response) => {
+            if (err) {
+				responseData.isSuccess = false;
+				responseData.msg = err.message;
+				communicator.send(res, responseData);
+			}
+			else{
+				responseData.isSuccess = true;
+				communicator.send(res, responseData);
+			}
+        });
+});                          
 //=======================================================
 module.exports = router;

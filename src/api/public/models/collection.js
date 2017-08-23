@@ -42,8 +42,9 @@ let patientProfileSchema = new Schema({
     medicalHistoryOther: { type: String, required: false, unique: false },
     allergy: { type: String, required: false, unique: false },
     notes: { type: String, required: false, unique: false },
-    habit: { type: String, required: false, unique: false },
-    connection: { type: Array, required: false, unique: false }
+    lifeStyle: { type: String, required: false, unique: false },
+    connection: { type: Array, required: false, unique: false },
+	connectionReq: { type: Array, required: false, unique: false }
 });
 //====================================================
 //====================================================
@@ -63,12 +64,39 @@ let doctorProfileSchema = new Schema({
     specialization: { type: Array, required: false, unique: false },
     specializationOther: { type: String, required: false, unique: false },
     qualification: { type: String, required: false, unique: false },
-    connection: { type: Array, required: false, unique: false }
+    connection: { type: Array, required: false, unique: false },
+	connectionReq: { type: Array, required: false, unique: false }
+});
+//====================================================
+//====================================================
+let prescriptionSchema = new Schema({
+    patientId: { type: String, required: false, unique: false },
+    doctorId: { type: String, required: false, unique: false },
+    recordDate: { type: String, required: false, unique: false },
+    referred: { type: String, required: false, unique: false },
+    weight: { type: String, required: false, unique: false },
+    temprature: { type: String, required: false, unique: false },
+    bp: { type: String, required: false, unique: false },
+    pulse: { type: String, required: false, unique: false },
+    diagnosis: { type: String, required: false, unique: false },
+    invAdvised: { type: String, required: false, unique: false},
+    followUp: { type: String, required: false, unique: false },
+    notes: { type: String, required: false, unique: false },
+    medicine: { type: Array, required: false, unique: false },
+    bbf: { type: Array, required: false, unique: false  },
+    abf: { type: Array, required: false, unique: false  },
+    bl: { type: Array, required: false, unique: false },
+	al: { type: Array, required: false, unique: false  },
+    eve: { type: Array, required: false, unique: false },
+    bd: { type: Array, required: false, unique: false  },
+    ad: { type: Array, required: false, unique: false  },
+	day: { type: Array, required: false, unique: false  }
 });
 //====================================================
 //====================================================
 module.exports = {
     USER: mongoose.model('user', userSchema, 'user'),
     DOCTOR_PROFILE: mongoose.model('doctor', doctorProfileSchema, 'doctor'),
-    PATIENT_PROFILE: mongoose.model('patient', patientProfileSchema, 'patient')
+    PATIENT_PROFILE: mongoose.model('patient', patientProfileSchema, 'patient'),
+	PRESCRIPTION: mongoose.model('prescription', prescriptionSchema, 'prescription')
 }
