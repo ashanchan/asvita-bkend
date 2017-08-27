@@ -82,15 +82,7 @@ let prescriptionSchema = new Schema({
     invAdvised: { type: String, required: false, unique: false},
     followUp: { type: String, required: false, unique: false },
     notes: { type: String, required: false, unique: false },
-    medicine: { type: Array, required: false, unique: false },
-    bbf: { type: Array, required: false, unique: false  },
-    abf: { type: Array, required: false, unique: false  },
-    bl: { type: Array, required: false, unique: false },
-	al: { type: Array, required: false, unique: false  },
-    eve: { type: Array, required: false, unique: false },
-    bd: { type: Array, required: false, unique: false  },
-    ad: { type: Array, required: false, unique: false  },
-	day: { type: Array, required: false, unique: false  }
+    medicine: { type: Array, required: false, unique: false }
 });
 //====================================================
 //====================================================
