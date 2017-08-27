@@ -24,6 +24,7 @@ var findProfile = function(body) {
     });
 };
 //=======================================================
+//=======================================================
 var updateProfile = function(body) {
     return new Promise(function(resolve, reject) {
         if (body.userId.substr(0, 3) === 'DOC') {
@@ -137,54 +138,93 @@ router.post('/getSearchList', function(req, res, next) {
     let body = JSON.parse(req.body) || {};
     let responseData = { isSuccess: false, 'resCode': 200, 'url': 'image' };
     let profile = body.userId.substr(0, 3) !== 'DOC' ? 'DOCTOR_PROFILE' : 'PATIENT_PROFILE';
-	if(body.reqMode === 'search')
-	{
-		collection[profile].find({}, function(err, response) {
-			if (err) {
-				responseData.isSuccess = false;
-				responseData.data = {};
-				communicator.send(res, responseData);
 
-			} else {
-				responseData.isSuccess = true;
-				responseData.data = response;
-				communicator.send(res, responseData);
-			}
-		})
-	}
-	else{
-		collection[profile].find({userId: {$in: body.connection}}, { _id:0, userId: 1, fullName: 1, address:1, dob:1, gender:1 },function(err, response) {
-			if (err) {
-				responseData.isSuccess = false;
-				responseData.data = {};
-				communicator.send(res, responseData);
+    if (body.reqMode === 'search') {
+        collection[profile].find({}, function(err, response) {
+            if (err) {
+                responseData.isSuccess = false;
+                responseData.data = {};
+                communicator.send(res, responseData);
 
-			} else {
-				responseData.isSuccess = true;
-				responseData.data = response;
-				communicator.send(res, responseData);
-			}
-		})
-	}
+            } else {
+                responseData.isSuccess = true;
+                responseData.data = response;
+                communicator.send(res, responseData);
+            }
+        })
+    } else {
+        collection[profile].find({ userId: { $in: body.connection } }, { _id: 0, userId: 1, fullName: 1, address: 1, dob: 1, gender: 1, medicalHistory: 1, medicalHistoryOther: 1, allergy: 1, notes: 1, lifeStyle: 1, connection: 1, connectionReq: 1 }, function(err, response) {
+            if (err) {
+                responseData.isSuccess = false;
+                responseData.data = {};
+                communicator.send(res, responseData);
+            } else {
+                responseData.isSuccess = true;
+                responseData.data = response;
+                communicator.send(res, responseData);
+            }
+        })
+    }
+
 });
 //=======================================================
 router.post('/updateProfileConnection', function(req, res, next) {
     let body = JSON.parse(req.body) || {};
     let responseData = { isSuccess: false, 'resCode': 200 };
-    let profile = body.userId.substr(0, 3) === 'DOC' ? 'DOCTOR_PROFILE' : 'PATIENT_PROFILE';
-    console.log(body.userId, body.reqId, body.reqMode);
+    let profile1 = body.userId.substr(0, 3) === 'DOC' ? 'DOCTOR_PROFILE' : 'PATIENT_PROFILE';
+    let profile2 = body.userId.substr(0, 3) !== 'DOC' ? 'DOCTOR_PROFILE' : 'PATIENT_PROFILE';
+    let connectionReq = removeArrayElem(body.connectionReq, body.reqId);
+    let reqType = body.reqType
+    let originalReq = body.reqType;
 
-    collection[profile].update({ userId: body.userId }, { $push: { 'connection': body.reqId } }, function(err, response) {
-        if (err) {
-            responseData.isSuccess = false;
-            responseData.data = {};
+
+    if (body.reqType === 'add') {
+        reqType = 'accept';
+    }
+
+    console.log('what is the request', body.reqType, reqType)
+    switch (reqType) {
+        case 'accept':
+            collection[profile1].findOneAndUpdate({ 'userId': body.userId }, { $push: { 'connection': body.reqId } },
+                function(err, response) {
+                    if (err) {
+                        communicator.send(res, responseData);
+                    } else {
+                        if (originalReq === 'accept') {
+                            collection[profile1].findOneAndUpdate({ 'userId': body.userId }, { $set: { 'connectionReq': body.connectionReq } },
+                                function(err, response) {
+                                    communicator.send(res, responseData);
+                                })
+                        } else if (originalReq === 'add') {
+                            collection[profile2].findOneAndUpdate({ 'userId': body.reqId }, { $push: { 'connectionReq': body.userId } },
+                                function(err, response) {
+                                    communicator.send(res, responseData);
+                                })
+                        }
+                    }
+                });
+            break;
+        case 'add':
             communicator.send(res, responseData);
-        } else {
-            responseData.isSuccess = true;
-            responseData.data = response;
-            communicator.send(res, responseData);
-        }
-    })
+            //copy user id to others reqconn
+            break;
+        case 'block':
+            break
+    }
 });
+//=======================================================
+function removeArrayElem(connectionReq, reqId) {
+    try {
+        var ctr = connectionReq.length;
+        for (var i = 0; i < ctr; i++) {
+            if (connectionReq[i] === reqId) break
+        }
+
+    } catch (e) {}
+    console.log('b4 ', connectionReq)
+    connectionReq.splice(i, 1)
+    console.log('after ', connectionReq);
+    return connectionReq;
+}
 //=======================================================
 module.exports = router;
