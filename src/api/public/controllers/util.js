@@ -1,10 +1,20 @@
 'use strict';
 const express = require('express');
 const fs = require('fs');
-const { communicator, thumbnail, mail } = require('./../../../framework').modules;
+const { communicator, thumbnail, mail, randomstring } = require('./../../../framework').modules;
 const collection = require('../models/collection');
 const getFolderSize = require('get-folder-size');
 let router = express.Router();
+//======================================================= 
+//=======================================================
+function generatePwd() {
+    return randomstring.generate({
+        length: 8,
+        readable: true,
+        charset: 'hex',
+        capitalization: 'uppercase'
+    })
+}
 //======================================================= 
 //=======================================================
 var userFolderSize = function(folder) {
@@ -131,6 +141,7 @@ router.post('/addPrescription', function(req, res, next) {
     let body = JSON.parse(req.body) || {};
     let responseData = { 'userId': body.userId, isSuccess: true, 'resCode': 200, 'url': 'request' };
     let prescription = new collection.PRESCRIPTION({
+        prescriptionId: generatePwd(),
         patientId: body.patientId,
         doctorId: body.doctorId,
         recordDate: body.recordDate,
