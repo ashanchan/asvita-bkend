@@ -44,7 +44,7 @@ let patientProfileSchema = new Schema({
     notes: { type: String, required: false, unique: false },
     lifeStyle: { type: String, required: false, unique: false },
     connection: { type: Array, required: false, unique: false },
-	connectionReq: { type: Array, required: false, unique: false }
+    connectionReq: { type: Array, required: false, unique: false }
 });
 //====================================================
 //====================================================
@@ -65,11 +65,12 @@ let doctorProfileSchema = new Schema({
     specializationOther: { type: String, required: false, unique: false },
     qualification: { type: String, required: false, unique: false },
     connection: { type: Array, required: false, unique: false },
-	connectionReq: { type: Array, required: false, unique: false }
+    connectionReq: { type: Array, required: false, unique: false }
 });
 //====================================================
 //====================================================
 let prescriptionSchema = new Schema({
+    prescriptionId: { type: String, required: true, unique: true },
     patientId: { type: String, required: false, unique: false },
     doctorId: { type: String, required: false, unique: false },
     recordDate: { type: String, required: false, unique: false },
@@ -79,7 +80,7 @@ let prescriptionSchema = new Schema({
     bp: { type: String, required: false, unique: false },
     pulse: { type: String, required: false, unique: false },
     diagnosis: { type: String, required: false, unique: false },
-    invAdvised: { type: String, required: false, unique: false},
+    invAdvised: { type: String, required: false, unique: false },
     followUp: { type: String, required: false, unique: false },
     notes: { type: String, required: false, unique: false },
     medicine: { type: Array, required: false, unique: false }
@@ -90,5 +91,5 @@ module.exports = {
     USER: mongoose.model('user', userSchema, 'user'),
     DOCTOR_PROFILE: mongoose.model('doctor', doctorProfileSchema, 'doctor'),
     PATIENT_PROFILE: mongoose.model('patient', patientProfileSchema, 'patient'),
-	PRESCRIPTION: mongoose.model('prescription', prescriptionSchema, 'prescription')
+    PRESCRIPTION: mongoose.model('prescription', prescriptionSchema, 'prescription')
 }
