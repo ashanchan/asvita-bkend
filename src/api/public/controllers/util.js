@@ -149,6 +149,7 @@ router.post('/addPrescription', function(req, res, next) {
         weight: body.weight,
         temprature: body.temprature,
         bp: body.bp,
+        pulse: body.pulse,
         diagnosis: body.diagnosis,
         invAdvised: body.invAdvised,
         followUp: body.followUp,
