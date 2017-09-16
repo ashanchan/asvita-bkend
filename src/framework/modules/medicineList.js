@@ -1,14 +1,14 @@
 'use strict';
-let medicineName;
+let medicineName = [];
 
 function configure(config, callback) {
     let fs = require('fs');
     try {
-        fs.readFile('src/http-header.json', 'utf8', function(err, data) {
+        fs.readFile('src/medicineList.json', 'utf8', function(err, data) {
             if (err) {
                 callback(err);
             } else {
-                medicineName = JSON.parse(data);
+                medicineName = JSON.parse(data).name;
                 console.log('medicine list set ho gaya', medicineName);
                 callback();
             }
@@ -19,7 +19,11 @@ function configure(config, callback) {
 }
 
 function getMedicineList(medName) {
-    return medicineName;
+    let filteredMedicine = medicineName.filter(function(medName) {
+        return medName.includes('nt');
+    });
+
+    return filteredMedicine;
 }
 
 

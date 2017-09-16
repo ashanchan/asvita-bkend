@@ -190,7 +190,7 @@ router.post('/getPrescription', function(req, res, next) {
 router.post('/getMedicine', function(req, res, next) {
     let body = JSON.parse(req.body) || {};
     let responseData = { 'userId': body.userId, isSuccess: true, 'resCode': 200, 'url': 'request' };
-    responseData.data = megetMedicineList('abc');
+    responseData.data = medicineList.getMedicineList('abc');
     console.log('our response ', responseData);
     communicator.send(res, responseData);
 });
