@@ -14,7 +14,6 @@ const notFound = require('./not-found');
 const errorHandler = require('./error-handler');
 const validator = require('./validator');
 
-
 module.exports = {
     domainContext,
     compression,
