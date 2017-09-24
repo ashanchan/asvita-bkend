@@ -11,7 +11,7 @@ const mail = require('./mail');
 const jwt = require('./jwt');
 const thumbnail = require('./thumbnail');
 const medicineList = require('./medicineList');
-const { validator } = require('./../middlewares');
+const { authGuard } = require('./../middlewares');
 
 function init(env, server) {
     return new Promise((resolve, reject) => {
@@ -21,7 +21,7 @@ function init(env, server) {
             crypto.configure.bind(null, nconf.get('crypto')),
             db.configure.bind(null, nconf.get('database')),
             mail.configure.bind(null, nconf.get('mail')),
-            validator.configure.bind(null, nconf.get('access_token')),
+            authGuard.configure.bind(null, nconf.get('access_token')),
             medicineList.configure.bind(null, nconf.get('access_token'))
         ], (module, callback) => {
             module.call(null, callback);

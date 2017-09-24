@@ -3,7 +3,6 @@ const { middlewares, modules } = require('./../../framework');
 const routes = require('./routes');
 const { nconf } = modules;
 
-
 module.exports = function() {
     return new Promise((resolve, reject) => {
         try {
@@ -27,7 +26,7 @@ module.exports = function() {
                 middlewares.bodyParser.IE(),
                 middlewares.bodyParser.textToHeaders(),
                 middlewares.requestTimeout(Number(nconf.get('timeout')), nconf.get('messages')),
-                middlewares.validator.gateKeeper()
+                middlewares.authGuard.gateKeeper()
             );
 
             routes.load(this);

@@ -42,6 +42,7 @@
   },
   "dependencies": {
     "get-folder-size": "^1.0.0",
+    "jslint": "^0.11.0",
     "node-thumbnail": "^0.12.0"
   }
 }
