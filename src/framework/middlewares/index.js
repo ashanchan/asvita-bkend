@@ -12,8 +12,7 @@ const responseTime = require('./response-time');
 const requestTimeout = require('./request-timeout');
 const notFound = require('./not-found');
 const errorHandler = require('./error-handler');
-const validator = require('./validator');
-
+const authGuard = require('./auth-guard');
 
 module.exports = {
     domainContext,
@@ -28,5 +27,5 @@ module.exports = {
     requestTimeout,
     notFound,
     errorHandler,
-    validator
+    authGuard
 };

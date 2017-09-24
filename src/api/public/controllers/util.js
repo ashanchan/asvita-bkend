@@ -1,7 +1,7 @@
 'use strict';
 const express = require('express');
 const fs = require('fs');
-const { communicator, thumbnail, mail, randomstring } = require('./../../../framework').modules;
+const { communicator, thumbnail, mail, randomstring, medicineList } = require('./../../../framework').modules;
 const collection = require('../models/collection');
 const getFolderSize = require('get-folder-size');
 let router = express.Router();
@@ -186,6 +186,13 @@ router.post('/getPrescription', function(req, res, next) {
             communicator.send(res, responseData);
         })
 });
-
+//=======================================================
+router.post('/getMedicine', function(req, res, next) {
+    let body = JSON.parse(req.body) || {};
+    let responseData = { 'userId': body.userId, isSuccess: true, 'resCode': 200, 'url': 'request' };
+    responseData.data = medicineList.getMedicineList('abc');
+    console.log('our response ', responseData);
+    communicator.send(res, responseData);
+});
 //=======================================================
 module.exports = router;
