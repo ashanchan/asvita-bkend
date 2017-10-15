@@ -15,12 +15,6 @@ let userSchema = new Schema({
     accessedOn: { type: Date, default: Date.now },
     subscription: { type: Object, required: false, unique: false }
 });
-
-userSchema.pre('validate', function(next) {
-    //  if (!this.registeredOn) this.registeredOn = this.accessedOn;
-    //   if (!this.registeredIP) this.registeredIP = this.accessedIP;
-    next();
-});
 //====================================================
 //====================================================
 let patientProfileSchema = new Schema({
@@ -75,10 +69,10 @@ let prescriptionSchema = new Schema({
     doctorId: { type: String, required: false, unique: false },
     recordDate: { type: String, required: false, unique: false },
     referred: { type: String, required: false, unique: false },
-    weight: { type: String, required: false, unique: false },
-    temprature: { type: String, required: false, unique: false },
-    bp: { type: String, required: false, unique: false },
-    pulse: { type: String, required: false, unique: false },
+    //weight: { type: String, required: false, unique: false },
+    //temprature: { type: String, required: false, unique: false },
+    //bp: { type: String, required: false, unique: false },
+    //pulse: { type: String, required: false, unique: false },
     diagnosis: { type: String, required: false, unique: false },
     invAdvised: { type: String, required: false, unique: false },
     followUp: { type: String, required: false, unique: false },
@@ -87,9 +81,45 @@ let prescriptionSchema = new Schema({
 });
 //====================================================
 //====================================================
+let temperatureSchema = new Schema({
+    userId: { type: String, required: true, index: true },
+    recDate: { type: Date, required: true, index: true },
+    temperature: { type: Number, required: true, index: false }
+});
+//====================================================
+//====================================================
+let weightSchema = new Schema({
+    userId: { type: String, required: true, index: true },
+    recDate: { type: Date, required: true, index: true },
+    weight: { type: Number, required: true, index: false },
+    height: { type: Number, required: true, index: false },
+});
+//====================================================
+//====================================================
+let sugarSchema = new Schema({
+    userId: { type: String, required: true, index: true },
+    recDate: { type: Date, required: true, index: true },
+    fasting: { type: Number, required: true, index: false },
+    normal: { type: Number, required: true, index: false },
+});
+//====================================================
+//====================================================
+let bpSchema = new Schema({
+    userId: { type: String, required: true, index: true },
+    recDate: { type: Date, required: true, index: true },
+    systolic: { type: Number, required: true, index: false },
+    diastolic: { type: Number, required: true, index: false },
+    pulse: { type: Number, required: true, index: false },
+});
+//====================================================
+//====================================================
 module.exports = {
     USER: mongoose.model('user', userSchema, 'user'),
     DOCTOR_PROFILE: mongoose.model('doctor', doctorProfileSchema, 'doctor'),
     PATIENT_PROFILE: mongoose.model('patient', patientProfileSchema, 'patient'),
-    PRESCRIPTION: mongoose.model('prescription', prescriptionSchema, 'prescription')
+    PRESCRIPTION: mongoose.model('prescription', prescriptionSchema, 'prescription'),
+    WEIGHT: mongoose.model('weight', weightSchema, 'weight'),
+    SUGAR: mongoose.model('sugar', sugarSchema, 'sugar'),
+    BP: mongoose.model('bp', bpSchema, 'bp'),
+    TEMPERATURE: mongoose.model('temperature', temperatureSchema, 'temperature')
 }
