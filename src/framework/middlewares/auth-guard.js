@@ -12,7 +12,10 @@ function gateKeeper() {
     return (req, res, next) => {
         let token = req.body.token || req.query.token || req.headers['x-access-token'];
         let body = JSON.parse(req.body) || {};
+        console.log('Hanuman watching your request', body.validate, token, secret);
+
         if (body.freeEntry && token === secret) {
+            console.log('free entry allowed');
             next();
         } else {
             jwt.verify(token)
