@@ -12,18 +12,18 @@ function gateKeeper() {
     return (req, res, next) => {
         let token = req.body.token || req.query.token || req.headers['x-access-token'];
         let body = JSON.parse(req.body) || {};
-        console.log('Hanuman watching your request', body.validate, token, secret);
-
         if (body.freeEntry && token === secret) {
-            console.log('free entry allowed');
+            console.log('Hanuman allows : free entry');
             next();
         } else {
             jwt.verify(token)
                 .then(function(response) {
+                    console.log('Hanuman checking ');
                     authData = response;
                     next();
                 })
                 .catch(function(err) {
+                    console.log('Hanuman Kicked you out ');
                     let response = { isSuccess: false, msg: 'Authentication Failed' }
                     return res.status(200).send({
                         response: response
