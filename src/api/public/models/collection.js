@@ -83,14 +83,14 @@ let prescriptionSchema = new Schema({
 //====================================================
 let temperatureSchema = new Schema({
     userId: { type: String, required: true, index: true },
-    recDate: { type: Date, required: true, index: true },
+    recordDate: { type: Date, required: true, index: true },
     temperature: { type: Number, required: true, index: false }
 });
 //====================================================
 //====================================================
 let weightSchema = new Schema({
     userId: { type: String, required: true, index: true },
-    recDate: { type: Date, required: true, index: true },
+    recordDate: { type: Date, required: true, index: true },
     weight: { type: Number, required: true, index: false },
     height: { type: Number, required: true, index: false },
 });
@@ -98,7 +98,7 @@ let weightSchema = new Schema({
 //====================================================
 let sugarSchema = new Schema({
     userId: { type: String, required: true, index: true },
-    recDate: { type: Date, required: true, index: true },
+    recordDate: { type: Date, required: true, index: true },
     fasting: { type: Number, required: true, index: false },
     normal: { type: Number, required: true, index: false },
 });
@@ -106,7 +106,7 @@ let sugarSchema = new Schema({
 //====================================================
 let bpSchema = new Schema({
     userId: { type: String, required: true, index: true },
-    recDate: { type: Date, required: true, index: true },
+    recordDate: { type: Date, required: true, index: true },
     systolic: { type: Number, required: true, index: false },
     diastolic: { type: Number, required: true, index: false },
     pulse: { type: Number, required: true, index: false },
