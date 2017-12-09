@@ -41,10 +41,11 @@ router.post('/read', function(req, res, next) {
             serveLogin(req, res);
             break;
         case 'rightPanel':
-            servePanel(req, res);
+        case 'graph':
+            readData(req, res);
             break;
         case 'utils':
-            serveUtil(req, res);
+            getDiskSpace(req, res);
             break;
     }
 });
@@ -72,6 +73,7 @@ function initData(req) {
     let data = JSON.parse(req.body) || {};
     data.userId = authGuard.getData().userId;
     data.db = String(data.db).toLocaleUpperCase();
+
     for (var k in defaultDbRequest) {
         if (String(data[k]).trim().length === 0) {
             data[k] = defaultDbRequest[k];
@@ -262,7 +264,7 @@ function serveLogin(req, res) {
         })
 }
 //=======================================================
-function servePanel(req, res) {
+function readData(req, res) {
     let responseData = { success: false, responseCode: 200, data: {} };
     getData()
         .then(function(response) {
@@ -277,14 +279,6 @@ function servePanel(req, res) {
         })
 }
 //=======================================================
-function serveUtil(req, res) {
-    switch (reqData.request) {
-        case "diskspace":
-            getDiskSpace(req, res);
-            break;
-    }
-}
-//=======================================================
 function getDiskSpace(req, res) {
     let responseData = { success: false, responseCode: 200, data: {} };
     let dir = './src/public/uploads/' + reqData.userId;
@@ -293,6 +287,7 @@ function getDiskSpace(req, res) {
             .then(function(response) {
                 responseData.success = true;
                 responseData.data['data'] = { diskSpace: response };
+                console.log('disk space ', response);
                 responseData.data['message'] = "Folder Processing Success";
                 communicator.send(res, responseData);
             })
