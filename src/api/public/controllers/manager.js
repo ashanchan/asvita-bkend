@@ -1,4 +1,5 @@
 'use strict';
+const mongodb = require('mongodb');
 const express = require('express');
 const router = express.Router();
 const { bcrypt, crypto, jwt, nconf, logger, randomstring, mail, thumbnail, communicator, utils, medicineList } = require('./../../../framework').modules;
@@ -42,6 +43,7 @@ router.post('/read', function(req, res, next) {
             break;
         case 'rightPanel':
         case 'graph':
+        case 'search':
             readData(req, res);
             break;
         case 'utils':
@@ -67,7 +69,36 @@ router.post('/update', function(req, res, next) {
 });
 
 //=======================================================
-router.post('/delete', function(req, res, next) {});
+router.post('/delete', function(req, res, next) {
+    reqData = initData(req);
+    let responseData = { success: false, responseCode: 200, data: {} };
+    removeData()
+        .then(function(response) {
+            responseData.success = true;
+            responseData.data['data'] = response;
+            communicator.send(res, responseData);
+        })
+        .catch(function(err) {
+            responseData.success = false;
+            responseData.data['message'] = err.message;
+            communicator.send(res, responseData);
+        })
+
+});
+//=======================================================
+router.get('/validate', function(req, res) {
+    let responseData = { success: false, responseCode: 200, data: {} };
+    validateUser(authGuard.getData().userId, authGuard.getData().pwd, requestIp.getClientIp(req))
+        .then(function(response) {
+            responseData.success = true;
+            responseData.data['message'] = "Validation Successful";
+            communicator.send(res, responseData);
+        })
+        .catch(function(err) {
+            responseData.success = false;
+            responseData.data['message'] = "Validation Error ", err.message;
+        })
+});
 //=======================================================
 function initData(req) {
     let data = JSON.parse(req.body) || {};
@@ -123,6 +154,7 @@ var createUser = function(type, profile, ip) {
                 //=== create profile entry
                 let newProfile = type === 'doc' ? new collection.DOCTOR_PROFILE() : new collection.PATIENT_PROFILE();
                 newProfile.userId = profile.userId;
+                newProfile.email = profile.email;
                 newProfile.save((err, response) => {
                     resolve(response);
                 });
@@ -157,6 +189,19 @@ var updateData = function() {
     });
 };
 //=======================================================
+var removeData = function() {
+    return new Promise(function(resolve, reject) {  
+        collection[reqData.db].remove({ _id: new mongodb.ObjectID(reqData.idx) },
+            function(err, response) {
+                if (err) {
+                    reject(err)
+                } else {
+                    resolve(response);
+                }
+            })
+    });
+};
+//=======================================================
 var addData = function() {
     return new Promise(function(resolve, reject) {
         let newRecord = new collection[reqData.db](reqData);
@@ -180,7 +225,9 @@ var userFolderSize = function(folder) {
 };
 //=======================================================
 function serveLogin(req, res) {
+    reqData = initData(req);
     let responseData = { success: false, responseCode: 200, data: {} };
+    let isMatched;
     let profile = { userId: '', email: '', pwd: '' };
     userExists()
         .then(function(response) {
@@ -189,7 +236,7 @@ function serveLogin(req, res) {
                 profile.email = response.email;
                 switch (reqData.mode) {
                     case 'login':
-                        let isMatched = bcrypt.decrypt(reqData.password, response.pwd);
+                        isMatched = bcrypt.decrypt(reqData.password, response.pwd);
                         responseData.success = isMatched;
                         //=== valid user
                         if (isMatched) {
@@ -229,6 +276,30 @@ function serveLogin(req, res) {
                         responseData.success = false;
                         responseData.data['message'] = "User Already Exist!!!<br>";
                         communicator.send(res, responseData);
+                        break;
+                    case 'reset':
+                        isMatched = bcrypt.decrypt(reqData.password, response.pwd);
+                        responseData.success = isMatched;
+                        //=== valid user
+                        if (isMatched) {
+                            validateUser(authGuard.getData().userId, reqData.newpassword, requestIp.getClientIp(req))
+                                .then(function(response) {
+                                    responseData.success = true;
+                                    responseData.data['message'] = "Password Changed.. Do Logoout for new changes";
+                                    communicator.send(res, responseData);
+                                })
+                                .catch(function(err) {
+                                    responseData.success = false;
+                                    responseData.data['message'] = "Validation Error ", err.message;
+                                    communicator.send(res, responseData);
+                                })
+
+                        } else {
+                            responseData.success = true;
+                            responseData.data['message'] = "Existing Password mismatched";
+                            communicator.send(res, responseData);
+                        }
+                        break;
                 }
             } else {
                 if (reqData.mode === 'register') {
@@ -287,7 +358,6 @@ function getDiskSpace(req, res) {
             .then(function(response) {
                 responseData.success = true;
                 responseData.data['data'] = { diskSpace: response };
-                console.log('disk space ', response);
                 responseData.data['message'] = "Folder Processing Success";
                 communicator.send(res, responseData);
             })
@@ -302,5 +372,22 @@ function getDiskSpace(req, res) {
         communicator.send(res, responseData);
     }
 }
+//=======================================================
+var validateUser = function(userId, pwd, ip) {
+    return new Promise(function(resolve, reject) {
+        collection.USER.findOneAndUpdate({
+                userId: userId
+            }, {
+                pwd: bcrypt.encrypt(pwd),
+                accessedIP: ip,
+                accessedOn: Date.now(),
+                validated: true,
+            }, {},
+            function(err, response) {
+                if (err) reject(err);
+                resolve(response);
+            })
+    });
+};
 //=======================================================
 module.exports = router;
