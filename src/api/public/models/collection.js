@@ -19,6 +19,7 @@ let userSchema = new Schema({
 //====================================================
 let patientProfileSchema = new Schema({
     userId: { type: String, required: true, unique: true },
+    email: { type: String, required: false, unique: true },
     fullName: { type: String, required: false, unique: false },
     mobile: { type: String, required: false, unique: false },
     gender: { type: String, required: false, unique: false },
@@ -44,17 +45,10 @@ let patientProfileSchema = new Schema({
 //====================================================
 let doctorProfileSchema = new Schema({
     userId: { type: String, required: true, unique: true },
+    email: { type: String, required: false, unique: true },
     fullName: { type: String, required: false, unique: false },
     mobile: { type: String, required: false, unique: false },
     clinic: { type: Array, required: false, unique: false },
-    /*   address: { type: Array, required: false, unique: false },
-       city: { type: Array, required: false, unique: false },
-       pin: { type: Array, required: false, unique: false },
-       state: { type: Array, required: false, unique: false },
-       contact: { type: Array, required: false, unique: false },
-       openTime: { type: Array, required: false, unique: false },
-       endTime: { type: Array, required: false, unique: false },
-       openDay: { type: Array, required: false, unique: false },*/
     specialization: { type: Array, required: false, unique: false },
     specializationOther: { type: String, required: false, unique: false },
     qualification: { type: String, required: false, unique: false },
@@ -69,10 +63,6 @@ let prescriptionSchema = new Schema({
     doctorId: { type: String, required: false, unique: false },
     recordDate: { type: String, required: false, unique: false },
     referred: { type: String, required: false, unique: false },
-    //weight: { type: String, required: false, unique: false },
-    //temprature: { type: String, required: false, unique: false },
-    //bp: { type: String, required: false, unique: false },
-    //pulse: { type: String, required: false, unique: false },
     diagnosis: { type: String, required: false, unique: false },
     invAdvised: { type: String, required: false, unique: false },
     followUp: { type: String, required: false, unique: false },
